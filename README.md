@@ -31,7 +31,7 @@ In this part, you will learn about the core components of ROS, how they work, an
 7. [Writing an action server and client](https://docs.ros.org/en/iron/Tutorials/Intermediate/Writing-an-Action-Server-Client/Py.html)
 8. [Creating launch files](https://docs.ros.org/en/iron/Tutorials/Intermediate/Launch/Creating-Launch-Files.html)
 
-## Part 2: Navigation in ROS
+## Part 2: Navigation in ROS (Simulation)
 
 In this part you will learn how to spawn a turtlebot3 robot into simulation and how to navigate it around using the ROS Navigation stack.
 
@@ -54,18 +54,98 @@ In this part you will learn how to spawn a turtlebot3 robot into simulation and 
 
 </details>
 
-5. Navigation with the Physical Turtlebot: TODO
 
-## Part 3: Manipulation in ROS
+## Part 3: Manipulation in ROS (Simulation)
 
-TODO
+In this part you will learn how to use [MoveIt!](https://moveit.picknik.ai/main/index.html) to plan for a manipulator to reach a goal position.
+
+> You should not have to clone anything. The Docker container has all the necessary packages installed.
 
 ### 3.1: Read and follow along with the following tutorials:
 
 1. [MoveIt Quickstart in RViz](https://moveit.picknik.ai/main/doc/tutorials/quickstart_in_rviz/quickstart_in_rviz_tutorial.html)
 
-2. [Learn about the MoveIt Motion Planning Python API](https://moveit.picknik.ai/main/doc/examples/motion_planning_python_api/motion_planning_python_api_tutorial.html)
 
-3. Move the physical robot using MoveIt: TODO
+## Part 4: Navigation in ROS (Real Robot)
 
-4. Collect a series of joint configurations using MoveItPy: TODO
+In this part you will learn how to navigate a real robot using the ROS Navigation stack. Unfortuantely, the docker containers you have been working in will not be able to run the navigation stack on a real robot (Some communication issues). However, we have setup one of the lab computers to have all the necessary components to run the navigation stack on a real robot.
+
+### 4.1: Follow along with the following instructions:
+
+1. Login to the lab computer:
+  - Account name: crash-course
+  - Password: crashcourse
+
+2. Open a tilix terminal
+Open tilix by pressing the windows key and typing `tilix`.
+
+3. Move to the ros_ws directory
+```sh
+cd ~/ros_ws
+```
+
+4. Source the workspace
+```sh
+source install/setup.bash
+```
+
+5. Turn on the turtlebot3 using the switch at near the front of the robot.
+
+6. Switch the wifi network on the lab computer to "NETGEAR48-5G"
+
+7. SSH into the turtlebot3
+```sh
+ssh ubuntu@192.168.1.3
+```
+The passworld is `turtlebot`
+
+8. Source the workspace
+```sh
+source ~/turtlebot_ws/install/setup.bash
+```
+
+9. Launch the namespace turtlebot3 bringup
+```sh
+ros2 launch namespace_bringup robot.launch.py
+```
+
+10. Place the turtlebot3 in the robot arena at least 1 foot away from a wall.
+
+> If placed too close to a wall commands might be ignored because the navigation stack will think the robot is stuck.
+
+11. Open another tilix terminal using `ctrl+shift+t`
+
+12. Source the workspace
+```sh
+cd ~/ros_ws && source install/setup.bash
+```
+
+13. Launch our navigation stack
+```sh
+cd ~/ros_ws/src/ppl-ros2-env/factory_simulation
+```
+
+```sh
+export TURTLEBOT3_MODEL=waffle
+```
+
+```sh
+ros2 launch factory_simulation navigation2.launch.py use_namespace:=True namespace:=robot1 params_file:=param/waffle1.yaml
+```
+
+14. Open another tilix terminal using `ctrl+shift+t`
+
+15. Launch our agent node
+```sh
+cd ~/ros_ws && source install/setup.bash
+```
+
+```sh
+ros2 run factory_sim agv_agent -x 0 -y 0 --name robot1
+```
+
+16. Once the RViz window opens, click the "2D Pose Estimate" button and click and drag the robot to the correct position (Where you placed the robot in the map).
+
+17. Now select the "2D Nav Goal" button and click on the map where you want the robot to go.
+
+18. Bouns: Try walking in front of the robot and see if it avoids you.
